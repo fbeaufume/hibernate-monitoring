@@ -1,0 +1,5 @@
+spring:
+  main:
+    banner-mode: "off"
+  jpa:
+    open-in-view: false
