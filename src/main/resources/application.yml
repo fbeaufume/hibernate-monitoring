@@ -3,7 +3,11 @@ spring:
     banner-mode: "off"
   jpa:
     open-in-view: false
+    # Uncomment to print the SQL statements
     show-sql: true
     properties:
-      hibernate.format_sql: true
-      hibernate.use_sql_comments: true
+      dialect: org.hibernate.dialect.H2Dialect
+       # Uncomment to "pretty print" the SQL logs
+#      hibernate.format_sql: true
+       # Uncomment to prefix the SQL logs with the HQL
+#      hibernate.use_sql_comments: true
