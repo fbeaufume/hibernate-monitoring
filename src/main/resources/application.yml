@@ -11,3 +11,10 @@ spring:
 #      hibernate.format_sql: true
        # Uncomment to prefix the SQL logs with the HQL
 #      hibernate.use_sql_comments: true
+
+logging.level:
+  com.adeliosys: debug
+  # Uncomment to logs the SQL statements
+  #  org.hibernate.SQL: debug
+  # Uncomment to log the parameters of the SQL statements
+  #  org.hibernate.type.descriptor.sql.BasicBinder: trace
