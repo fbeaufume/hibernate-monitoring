@@ -46,6 +46,11 @@ public class LibraryController {
         return extractIds(authorRepository.findByName(name));
     }
 
+    @GetMapping("/count")
+    public long count() {
+        return authorRepository.count() + bookRepository.count();
+    }
+
     public List<Long> extractIds(List<Author> authors) {
         return authors.stream().map(Author::getId).collect(Collectors.toList());
     }
