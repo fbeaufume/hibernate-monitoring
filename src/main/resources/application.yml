@@ -12,7 +12,8 @@ spring:
        # Uncomment to prefix the SQL logs with the HQL
 #      hibernate.use_sql_comments: true
       # Uncomment to enable the statistics
-      hibernate.generate_statistics: true
+#      hibernate.generate_statistics: true
+      hibernate.session.events.auto: com.adeliosys.sample.CustomSessionEventListener
 
 logging.level:
   com.adeliosys: debug
