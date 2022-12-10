@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.EntityManagerFactory;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +24,9 @@ public class LibraryController {
 
     @Autowired
     private BookRepository bookRepository;
+
+    @Autowired
+    private EntityManagerFactory entityManagerFactory;
 
     @PostConstruct
     @GetMapping("/reset")
@@ -49,6 +53,11 @@ public class LibraryController {
     @GetMapping("/count")
     public long count() {
         return authorRepository.count() + bookRepository.count();
+    }
+
+    @GetMapping("/hibernate-stats")
+    public String hibernateStats() {
+        return HibernateStatisticsUtil.generateStatsReport(entityManagerFactory);
     }
 
     public List<Long> extractIds(List<Author> authors) {
