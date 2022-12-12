@@ -41,7 +41,7 @@ public class HibernateStatisticsUtil {
         buffer.append("tr:nth-of-type(odd) { background-color:#EEEEEE; }\n");
         buffer.append("td, th { border: 1px solid lightgrey; }\n");
         buffer.append("</style>\n");
-        buffer.append("<title>Hibernate Statistics</title></head><body><center><b>Hibernate Statistics</b><br><br>\n");
+        buffer.append("<title>Hibernate Statistics</title></head><body><center><b>Hibernate Statistics</b><br>\n");
     }
 
     private static void writeGeneralStats(Statistics stats, StringBuilder buffer) {
