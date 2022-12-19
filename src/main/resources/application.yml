@@ -1,6 +1,11 @@
 spring:
   main:
     banner-mode: "off"
+  datasource:
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      register-mbeans: true
   jpa:
     open-in-view: false
     # Uncomment to print the SQL statements (note that the logs do not integrate with the logging framework)
