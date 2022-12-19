@@ -4,6 +4,7 @@ import com.adeliosys.sample.model.Author;
 import com.adeliosys.sample.model.Book;
 import com.adeliosys.sample.repository.AuthorRepository;
 import com.adeliosys.sample.repository.BookRepository;
+import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -27,6 +30,9 @@ public class LibraryController {
 
     @Autowired
     private EntityManagerFactory entityManagerFactory;
+
+    @Autowired
+    private DataSource dataSource;
 
     @PostConstruct
     @GetMapping("/reset")
@@ -50,17 +56,26 @@ public class LibraryController {
         return extractIds(authorRepository.findByName(name));
     }
 
+    private List<Long> extractIds(List<Author> authors) {
+        return authors.stream().map(Author::getId).collect(Collectors.toList());
+    }
+
     @GetMapping("/count")
     public long count() {
         return authorRepository.count() + bookRepository.count();
     }
 
     @GetMapping("/hibernate-stats")
-    public String hibernateStats() {
+    public String getHibernateStats() {
         return HibernateStatisticsUtil.generateStatsReport(entityManagerFactory);
     }
 
-    public List<Long> extractIds(List<Author> authors) {
-        return authors.stream().map(Author::getId).collect(Collectors.toList());
+    @GetMapping("/datasource-stats")
+    public Map<String, Object> getDatasourceStats() {
+        HikariDataSource hikariDataSource = (HikariDataSource) dataSource;
+        return Map.of(
+                "totalConnections", hikariDataSource.getHikariPoolMXBean().getTotalConnections(),
+                "activeConnections", hikariDataSource.getHikariPoolMXBean().getActiveConnections(),
+                "threadsWaiting", hikariDataSource.getHikariPoolMXBean().getThreadsAwaitingConnection());
     }
 }
