@@ -20,6 +20,7 @@ spring:
       hibernate.generate_statistics: true
       # Uncomment to use a custom Hibernate session metrics logger
 #      hibernate.session.events.auto: com.adeliosys.sample.CustomSessionEventListener
+      hibernate.jmx.enabled: true
 
 logging.level:
   com.adeliosys: debug
