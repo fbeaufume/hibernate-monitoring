@@ -8,6 +8,8 @@ To stick with Spring Boot 2.7.4, use the `spring-boot-2` tag.
 
 ## Usage
 
+Configure the Hibernate monitoring features as needed by editing `application.yml`.
+
 Run the application with `mvn spring-boot:run` or using your IDE.
 
 Then open http://localhost:8080/ and use the links to execute some persistence operations.
