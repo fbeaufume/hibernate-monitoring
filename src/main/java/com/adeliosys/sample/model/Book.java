@@ -1,6 +1,6 @@
 package com.adeliosys.sample.model;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 public class Book {

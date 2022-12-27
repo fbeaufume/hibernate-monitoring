@@ -6,7 +6,7 @@ import org.hibernate.stat.EntityStatistics;
 import org.hibernate.stat.QueryStatistics;
 import org.hibernate.stat.Statistics;
 
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
