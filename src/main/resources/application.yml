@@ -26,8 +26,10 @@ logging.level:
   com.adeliosys: debug
   # Uncomment to logs the SQL statements
 #  org.hibernate.SQL: debug
-  # Uncomment to log the parameters of the SQL statements
+  # Uncomment to log the parameters of the SQL statements with Hibernate 5
 #  org.hibernate.type.descriptor.sql.BasicBinder: trace
+  # Uncomment to log the parameters of the SQL statements with Hibernate 6
+#  org.hibernate.orm.jdbc.bind: trace
   # Uncomment to log some session stats (this requires the statistics to be enabled)
   org.hibernate.stat: debug
   # Uncomment to disable the default Hibernate session metrics logger
