@@ -10,6 +10,8 @@ spring:
     open-in-view: false
     # Uncomment to print the SQL statements (note that the logs do not integrate with the logging framework)
     show-sql: true
+    hibernate:
+      ddl-auto: update
     properties:
       dialect: org.hibernate.dialect.H2Dialect
       # Uncomment to "pretty print" the SQL logs
@@ -24,7 +26,7 @@ spring:
 
 logging.level:
   com.adeliosys: debug
-  # Uncomment to logs the SQL statements
+  # Uncomment to log the SQL statements
 #  org.hibernate.SQL: debug
   # Uncomment to log the parameters of the SQL statements with Hibernate 5
 #  org.hibernate.type.descriptor.sql.BasicBinder: trace
