@@ -18,6 +18,8 @@ spring:
 #      hibernate.format_sql: true
        # Uncomment to prefix the SQL logs with the HQL
 #      hibernate.use_sql_comments: true
+      # Uncomment to log the slow queries (but it will not work with H2 since the embedded DB is way too fast)
+#      hibernate.session.events.log.LOG_QUERIES_SLOWER_THAN_MS: 1
       # Uncomment to enable the statistics
       hibernate.generate_statistics: true
       # Uncomment to use a custom Hibernate session metrics logger
