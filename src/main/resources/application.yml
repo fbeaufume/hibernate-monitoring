@@ -24,7 +24,8 @@ spring:
       hibernate.generate_statistics: true
       # Uncomment to use a custom Hibernate session metrics logger
 #      hibernate.session.events.auto: com.adeliosys.sample.CustomSessionEventListener
-      hibernate.jmx.enabled: true
+      # Uncomment to publish the session factory metrics through JMX (but this is not supported by Hibernate 6)
+#      hibernate.jmx.enabled: true
 
 logging.level:
   com.adeliosys: debug
@@ -34,7 +35,7 @@ logging.level:
 #  org.hibernate.type.descriptor.sql.BasicBinder: trace
   # Uncomment to log the parameters of the SQL statements with Hibernate 6
 #  org.hibernate.orm.jdbc.bind: trace
-  # Uncomment to log some session stats (this requires the statistics to be enabled)
-  org.hibernate.stat: debug
+  # Uncomment to log the statement metrics (this requires the statistics to be enabled)
+#  org.hibernate.stat: debug
   # Uncomment to disable the default Hibernate session metrics logger
   org.hibernate.engine.internal.StatisticalLoggingSessionEventListener: warn
