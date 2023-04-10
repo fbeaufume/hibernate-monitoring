@@ -23,7 +23,7 @@ spring:
       # Uncomment to enable the statistics
       hibernate.generate_statistics: true
       # Uncomment to use a custom Hibernate session metrics logger
-#      hibernate.session.events.auto: com.adeliosys.sample.CustomSessionEventListener
+      hibernate.session.events.auto: com.adeliosys.sample.CustomSessionEventListener
       # Uncomment to publish the session factory metrics through JMX (but this is not supported by Hibernate 6)
 #      hibernate.jmx.enabled: true
 

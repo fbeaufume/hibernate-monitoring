@@ -16,7 +16,7 @@ public class HibernateStatisticsUtil {
     /**
      * Generate a custom HTML stats report for the Hibernate session factory from a given entity manager factory.
      */
-    public static String generateStatsReport(EntityManagerFactory entityManagerFactory) {
+    public static String generateStatsReport(EntityManagerFactory entityManagerFactory, boolean clear) {
         SessionFactory sessionFactory = entityManagerFactory.unwrap(SessionFactory.class);
         Statistics stats = sessionFactory.getStatistics();
 
@@ -28,6 +28,10 @@ public class HibernateStatisticsUtil {
         writeEntityStats(stats, buffer);
         writeCollectionStats(stats, buffer);
         writeQueryStats(stats, buffer);
+
+        if (clear) {
+            stats.clear();
+        }
 
         return buffer.toString();
     }

@@ -6,6 +6,7 @@ import com.adeliosys.sample.repository.AuthorRepository;
 import com.adeliosys.sample.repository.BookRepository;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -66,11 +67,13 @@ public class LibraryController {
     }
 
     @GetMapping("/hibernate-stats")
-    public String getHibernateStats() {
-        return HibernateStatisticsUtil.generateStatsReport(entityManagerFactory);
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public String getHibernateStats(@RequestParam(required = false) boolean clear) {
+        return HibernateStatisticsUtil.generateStatsReport(entityManagerFactory, clear);
     }
 
     @GetMapping("/datasource-stats")
+    @Transactional(propagation = Propagation.SUPPORTS)
     public Map<String, Object> getDatasourceStats() {
         HikariDataSource hikariDataSource = (HikariDataSource) dataSource;
         return Map.of(
