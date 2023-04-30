@@ -3,7 +3,7 @@ package com.adeliosys.sample.model;
 import jakarta.persistence.*;
 
 @Entity
-public class Book {
+public class Book implements WithId {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

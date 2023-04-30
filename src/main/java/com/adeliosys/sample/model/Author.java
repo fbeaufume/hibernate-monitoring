@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class Author {
+public class Author implements WithId {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
