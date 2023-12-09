@@ -1,5 +1,7 @@
 # Hibernate monitoring
 
+This repository is a sample application for my [Hibernate monitoring guide](https://www.adeliosys.fr/articles/hibernate-monitoring/) article.
+
 This simple Spring Boot web application shows how to use several Hibernate monitoring features such as logs
 and metrics/statistics.
 
