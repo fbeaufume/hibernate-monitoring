@@ -217,7 +217,7 @@ public class CustomSessionEventListener extends BaseSessionEventListener {
             return;
         }
 
-        // Lgo metrics only for session that were actually used
+        // Log metrics only for session that were actually used
         if (jdbcConnectionAcquisitionCount <= 0) {
             return;
         }
