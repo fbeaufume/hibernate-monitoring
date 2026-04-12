@@ -7,7 +7,7 @@ This simple Spring Boot web application shows how to use several Hibernate obser
 and metrics.
 
 The project was started with Spring Boot 2 then migrated to Spring Boot 3.
-To stick with Spring Boot 2, use the `spring-boot-2` tag.
+To stick with Spring Boot 2, use the `spring-boot-2` branch.
 
 ## Usage
 
