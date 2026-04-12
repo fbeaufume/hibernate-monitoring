@@ -1,6 +1,6 @@
 package com.adeliosys.sample;
 
-import org.hibernate.BaseSessionEventListener;
+import org.hibernate.SessionEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,8 +8,7 @@ import org.slf4j.LoggerFactory;
  * This custom implementation is inspired by org.hibernate.engine.internal.StatisticalLoggingSessionEventListener
  * and is used to log Hibernate session metrics in a more developer friendly way.
  */
-@SuppressWarnings("unused")
-public class CustomSessionEventListener extends BaseSessionEventListener {
+public class CustomSessionEventListener implements SessionEventListener {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(CustomSessionEventListener.class);
 
@@ -222,12 +221,13 @@ public class CustomSessionEventListener extends BaseSessionEventListener {
             return;
         }
 
-        LOGGER.debug("Session metrics:\n"
-                        + "    connections  : acquired {} ({} μs)\n"
-                        + "    statements   : prepared {} ({} μs), executed {} ({} μs)\n"
-                        + "    JDBC batches : executed {} ({} μs)\n"
-                        + "    cache        : {} puts ({} μs), {} hits ({} μs), {} misses ({} μs)\n"
-                        + "    flushes      : executed {} ({} μs) for {} entities and {} collections, executed {} partials ({} μs) for {} entities and {} collections",
+        LOGGER.debug("""
+                        Session metrics:
+                            connections  : acquired {} ({} μs)
+                            statements   : prepared {} ({} μs), executed {} ({} μs)
+                            JDBC batches : executed {} ({} μs)
+                            cache        : {} puts ({} μs), {} hits ({} μs), {} misses ({} μs)
+                            flushes      : executed {} ({} μs) for {} entities and {} collections, executed {} partials ({} μs) for {} entities and {} collections""",
                 jdbcConnectionAcquisitionCount,
                 jdbcConnectionAcquisitionTime / 1000,
                 jdbcPrepareStatementCount,
