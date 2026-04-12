@@ -6,8 +6,8 @@ This repository is a sample application for my
 This simple Spring Boot web application shows how to use several Hibernate observability features such as logs
 and metrics.
 
-The project was started with Spring Boot 2 then migrated to Spring Boot 3.
-To stick with Spring Boot 2, use the `spring-boot-2` branch.
+The project was started with Spring Boot 2 then migrated to Spring Boot 3 then 4.
+The main branch targets Spring Boot 4. To use the Spring Boot 2 ou 3 variant, use the dedicated branch.
 
 ## Usage
 
