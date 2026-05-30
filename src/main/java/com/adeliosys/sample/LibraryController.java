@@ -69,7 +69,11 @@ public class LibraryController {
     @GetMapping("/hibernate-stats")
     @Transactional(propagation = Propagation.SUPPORTS)
     public String getHibernateStats(@RequestParam(required = false) boolean clear) {
-        return HibernateStatisticsUtil.generateStatsReport(entityManagerFactory, clear);
+        String result = HibernateStatisticsUtil.generateStatsReport(entityManagerFactory);
+        if (clear) {
+            HibernateStatisticsUtil.resetStats(entityManagerFactory);
+        }
+        return result;
     }
 
     @GetMapping("/datasource-stats")

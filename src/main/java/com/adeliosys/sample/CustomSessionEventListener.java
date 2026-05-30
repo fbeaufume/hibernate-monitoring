@@ -223,25 +223,27 @@ public class CustomSessionEventListener implements SessionEventListener {
 
         LOGGER.debug("""
                         Session metrics:
-                            connections  : acquired {} ({} μs)
-                            statements   : prepared {} ({} μs), executed {} ({} μs)
+                            connections  : acquired {} ({} μs), released {} ({} μs)
+                            statements   : executed {} ({} μs), prepared {} ({} μs)
                             JDBC batches : executed {} ({} μs)
                             cache        : {} puts ({} μs), {} hits ({} μs), {} misses ({} μs)
                             flushes      : executed {} ({} μs) for {} entities and {} collections, executed {} partials ({} μs) for {} entities and {} collections""",
                 jdbcConnectionAcquisitionCount,
                 jdbcConnectionAcquisitionTime / 1000,
-                jdbcPrepareStatementCount,
-                jdbcPrepareStatementTime / 1000,
+                jdbcConnectionReleaseCount,
+                jdbcConnectionReleaseTime / 1000,
                 jdbcExecuteStatementCount,
                 jdbcExecuteStatementTime / 1000,
+                jdbcPrepareStatementCount,
+                jdbcPrepareStatementTime / 1000,
                 jdbcExecuteBatchCount,
                 jdbcExecuteBatchTime / 1000,
                 cachePutCount,
-                cachePutTime,
+                cachePutTime / 1000,
                 cacheHitCount,
-                cacheHitTime,
+                cacheHitTime / 1000,
                 cacheMissCount,
-                cacheMissTime,
+                cacheMissTime / 1000,
                 flushCount,
                 flushTime / 1000,
                 flushEntityCount,

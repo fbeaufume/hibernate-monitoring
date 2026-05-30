@@ -1,24 +1,28 @@
 package com.adeliosys.sample;
 
-import org.hibernate.SessionFactory;
-import org.hibernate.stat.CollectionStatistics;
-import org.hibernate.stat.EntityStatistics;
-import org.hibernate.stat.QueryStatistics;
-import org.hibernate.stat.Statistics;
-
 import jakarta.persistence.EntityManagerFactory;
-import java.text.SimpleDateFormat;
+import org.hibernate.SessionFactory;
+import org.hibernate.stat.*;
+
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.Date;
+import java.util.function.Function;
 
 public class HibernateStatisticsUtil {
+
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSZ").withZone(ZoneId.systemDefault());
+
+    public static void resetStats(EntityManagerFactory entityManagerFactory) {
+        entityManagerFactory.unwrap(SessionFactory.class).getStatistics().clear();
+    }
 
     /**
      * Generate a custom HTML stats report for the Hibernate session factory from a given entity manager factory.
      */
-    public static String generateStatsReport(EntityManagerFactory entityManagerFactory, boolean clear) {
-        SessionFactory sessionFactory = entityManagerFactory.unwrap(SessionFactory.class);
-        Statistics stats = sessionFactory.getStatistics();
+    public static String generateStatsReport(EntityManagerFactory entityManagerFactory) {
+        Statistics stats = entityManagerFactory.unwrap(SessionFactory.class).getStatistics();
 
         StringBuilder buffer = new StringBuilder(32768);
 
@@ -27,11 +31,8 @@ public class HibernateStatisticsUtil {
         writeGeneralStats(stats, buffer);
         writeEntityStats(stats, buffer);
         writeCollectionStats(stats, buffer);
+        writeCacheStats(stats, "Cache Statistics", stats::getDomainDataRegionStatistics, buffer);
         writeQueryStats(stats, buffer);
-
-        if (clear) {
-            stats.clear();
-        }
 
         return buffer.toString();
     }
@@ -54,7 +55,7 @@ public class HibernateStatisticsUtil {
         buffer.append("<tr><th colspan=2>General Statistics</th></tr>");
         buffer.append("<tr><td><i>Name</i></td><td><i>Value</i></td></tr>\n");
         writeObjectStat("Statistics Enabled", stats.isStatisticsEnabled(), buffer);
-        writeObjectStat("Start Time", stats.getStartTime() + " (" + getFormattedTimestamp(stats.getStartTime()) + ")", buffer);
+        writeObjectStat("Start Time", getFormattedTimestamp(stats.getStart()), buffer);
         writeObjectStat("Sessions",
                 "Opened=" + stats.getSessionOpenCount() +
                         ", Closed=" + stats.getSessionCloseCount(), buffer);
@@ -107,7 +108,7 @@ public class HibernateStatisticsUtil {
         buffer.append("<br>\n");
         buffer.append("<table>\n");
         buffer.append("<tr><th colspan=7>Entity Statistics</th></tr>");
-        buffer.append("<tr><td><i>Name</i></td><td><i>Fetches</i></td><td><i>Loads</i></td><td><i>Inserts</i>");
+        buffer.append("<tr><td><i>Class Name</i></td><td><i>Fetches</i></td><td><i>Loads</i></td><td><i>Inserts</i>");
         buffer.append("<td><i>Updates</i></td><td><i>Deletes</i></td><td><i>Optimistic Failures</i></td></tr>");
 
         String[] entityNames = stats.getEntityNames();
@@ -187,12 +188,52 @@ public class HibernateStatisticsUtil {
         buffer.append("</table>\n");
     }
 
+    private static void writeCacheStats(Statistics stats, String title, Function<String, CacheRegionStatistics> finder, StringBuilder buffer) {
+        buffer.append("<br>\n");
+        buffer.append("<table>\n");
+        buffer.append("<tr><th colspan=4>");
+        buffer.append(title);
+        buffer.append("</th></tr>");
+        buffer.append("<tr><td><i>Region Name</i></td><td><i>Hits</i></td><td><i>Misses</i></td><td><i>Puts</i></td></tr>");
+
+        String[] names = stats.getSecondLevelCacheRegionNames();
+        Arrays.sort(names);
+        for (String name : names) {
+            CacheRegionStatistics cacheStats;
+            try {
+                cacheStats = finder.apply(name);
+                if (cacheStats == null) {
+                    continue;
+                }
+            }
+            catch (Exception e) {
+                continue;
+            }
+
+            if (cacheStats.getHitCount() + cacheStats.getMissCount() + cacheStats.getPutCount() <= 0) {
+                // Hide unused caches
+                continue;
+            }
+
+            buffer.append("<tr><td>");
+            buffer.append(name);
+            buffer.append("</td><td>");
+            buffer.append(cacheStats.getHitCount());
+            buffer.append("</td><td>");
+            buffer.append(cacheStats.getMissCount());
+            buffer.append("</td><td>");
+            buffer.append(cacheStats.getPutCount());
+            buffer.append("</td></tr>\n");
+        }
+        buffer.append("</table>\n");
+    }
+
     private static void writeQueryStats(Statistics stats, StringBuilder buffer) {
         buffer.append("<br>\n");
         buffer.append("<table>\n");
-        buffer.append("<tr><th colspan=9>Query Statistics</th></tr>");
-        buffer.append("<tr><td><i>Name</i></td><td><i>Executions</i></td><td><i>Hits</i></td><td><i>Misses</i></td><td><i>Puts</i></td>");
-        buffer.append("<td><i>Average Time</i></td><td><i>Min Time</i></td><td><i>Max Time</i></td><td><i>Total Rows</i></td></tr>");
+        buffer.append("<tr><th colspan=10>Query Statistics</th></tr>");
+        buffer.append("<tr><td><i>Query</i></td><td><i>Executions</i></td><td><i>Min Time</i></td><td><i>Max Time</i></td><td><i>Avg Time</i></td>");
+        buffer.append("<td><i>Total Time</i></td><td><i>Total Rows</i></td><td><i>Hits</i></td><td><i>Misses</i></td><td><i>Puts</i></td></tr>");
 
         String[] queries = stats.getQueries();
         Arrays.sort(queries);
@@ -201,28 +242,29 @@ public class HibernateStatisticsUtil {
             buffer.append("<tr><td>");
             buffer.append(query);
             buffer.append("</td><td>");
-            buffer.append(queryStats.getExecutionCount());
+            buffer.append(queryStats.getExecutionCount()); // Count
             buffer.append("</td><td>");
-            buffer.append(queryStats.getCacheHitCount());
+            buffer.append(queryStats.getExecutionCount() <= 0 ? 0 : queryStats.getExecutionMinTime()); // Min
             buffer.append("</td><td>");
-            buffer.append(queryStats.getCacheMissCount());
+            buffer.append(queryStats.getExecutionMaxTime()); // Max
             buffer.append("</td><td>");
-            buffer.append(queryStats.getCachePutCount());
+            buffer.append(queryStats.getExecutionAvgTime()); // Average
             buffer.append("</td><td>");
-            buffer.append(queryStats.getExecutionAvgTime());
+            buffer.append(queryStats.getExecutionCount() * queryStats.getExecutionAvgTime()); // Total
             buffer.append("</td><td>");
-            buffer.append(queryStats.getExecutionMinTime());
+            buffer.append(queryStats.getExecutionRowCount()); // Rows
             buffer.append("</td><td>");
-            buffer.append(queryStats.getExecutionMaxTime());
+            buffer.append(queryStats.getCacheHitCount()); // Hit
             buffer.append("</td><td>");
-            buffer.append(queryStats.getExecutionRowCount());
+            buffer.append(queryStats.getCacheMissCount()); // Miss
+            buffer.append("</td><td>");
+            buffer.append(queryStats.getCachePutCount()); // Put
             buffer.append("</td></tr>\n");
         }
         buffer.append("</table>\n");
     }
 
-    private static String getFormattedTimestamp(long timestamp) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
-        return sdf.format(new Date(timestamp));
+    private static String getFormattedTimestamp(Instant instant) {
+        return DATE_TIME_FORMATTER.format(instant);
     }
 }
